@@ -93,6 +93,18 @@ return [
             // 'trust_server_certificate' => env('DB_TRUST_SERVER_CERTIFICATE', 'false'),
         ],
 
+        'oracle' => [
+            'driver'         => 'oracle',
+            'tns'            => env('DB_TNS', ''),
+            'host'           => env('DB_HOST', 'localhost'),
+            'port'           => env('DB_PORT', '1521'),
+            'database'       => env('DB_DATABASE', 'XEPDB1'),
+            'service_name'   => env('DB_SERVICE_NAME', 'XEPDB1'),
+            'username'       => env('DB_USERNAME', 'project_cms'),
+            'password'       => env('DB_PASSWORD', '000001'),
+            'charset'        => 'AL32UTF8',
+            'prefix'         => '',
+        ],
     ],
 
     /*
