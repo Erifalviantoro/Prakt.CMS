@@ -14,21 +14,59 @@
 
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-gutter items-start">
             <!-- Sisi Kiri: Detail Deskripsi -->
-            <div class="lg:col-span-8 bg-white border border-outline-variant rounded-2xl p-8 space-y-6 shadow-sm">
-                <div>
-                    <span class="inline-block px-3 py-1 bg-secondary/10 text-secondary text-xs font-semibold rounded-full mb-3">Layanan Utama</span>
-                    <h1 class="font-headline-lg text-headline-lg text-primary">{{ $layanan->nama_layanan }}</h1>
-                </div>
+<div class="lg:col-span-8 bg-white border border-outline-variant rounded-2xl overflow-hidden shadow-sm">
 
-                <hr class="border-outline-variant">
+    {{-- Gambar Layanan --}}
+<div class="w-full h-48 overflow-hidden">
+    @if($layanan->gambar)
+        <img src="{{ asset('storage/'.$layanan->gambar) }}"
+             class="w-full h-full object-cover"
+             alt="{{ $layanan->nama_layanan }}">
+    @else
+        <img src="{{ asset('images/default-service.jpg') }}"
+             class="w-full h-full object-cover"
+             alt="Default">
+    @endif
+</div>
 
-                <div class="space-y-4">
-                    <h3 class="font-bold text-lg text-primary">Deskripsi Layanan</h3>
-                    <p class="text-on-surface-variant leading-relaxed whitespace-pre-line">
-                        {{ $layanan->deskripsi ?? 'Belum ada penjelasan detail untuk layanan ini. Silakan hubungi tim support atau mekanik kami di bengkel untuk informasi lebih lanjut mengenai pengerjaan mekanis ini.' }}
-                    </p>
-                </div>
-            </div>
+    {{-- Isi --}}
+    <div class="p-8 space-y-6">
+
+        <div>
+            <span class="inline-block px-3 py-1 bg-secondary/10 text-secondary text-xs font-semibold rounded-full mb-3">
+                Layanan Utama
+            </span>
+
+            <h1 class="font-headline-lg text-headline-lg text-primary">
+                {{ $layanan->nama_layanan }}
+            </h1>
+        </div>
+<div class="flex items-center gap-3 mt-3">
+
+    <span class="bg-green-100 text-green-700 px-3 py-1 rounded-full text-sm font-semibold">
+        {{ $layanan->status }}
+    </span>
+
+    <span class="text-sm text-gray-500">
+        Estimasi {{ $layanan->estimasi_waktu }} Menit
+    </span>
+
+</div>
+        <hr class="border-outline-variant">
+
+        <div class="space-y-4">
+            <h3 class="font-bold text-lg text-primary">
+                Deskripsi Layanan
+            </h3>
+
+            <p class="text-on-surface-variant leading-relaxed whitespace-pre-line">
+                {{ $layanan->deskripsi ?? 'Belum ada penjelasan detail untuk layanan ini.' }}
+            </p>
+        </div>
+
+    </div>
+
+</div>
 
             <!-- Sisi Kanan: Informasi Card Kontrak / Ringkasan Harga -->
             <div class="lg:col-span-4 bg-white border border-outline-variant rounded-2xl p-8 shadow-sm space-y-6 sticky top-24">
@@ -73,5 +111,6 @@
             </div>
         </div>
     </div>
+</div>
 </main>
 @endsection

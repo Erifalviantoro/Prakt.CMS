@@ -41,7 +41,7 @@
             </div>
 
             <div class="bg-surface-container-lowest border border-outline-variant p-6 rounded-xl flex flex-col justify-between">
-                <span class="material-symbols-outlined text-secondary text-3xl mb-4">tag_count</span>
+                <span class="material-symbols-outlined text-secondary text-3xl mb-4">count</span>
                 <div>
                     <h3 class="text-2xl font-bold text-primary">
                         {{ $penggunaan->sum('jumlah') }} pcs

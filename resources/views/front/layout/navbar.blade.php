@@ -1,37 +1,79 @@
 <header class="w-full top-0 sticky z-50 bg-surface shadow-sm border-b border-outline-variant">
 <nav class="flex justify-between items-center max-w-container-max-width mx-auto px-margin-desktop h-20">
 <div class="flex items-center gap-3">
-<img alt="Sumber Baru Motor Logo" class="w-10 h-10 object-contain" src="https://lh3.googleusercontent.com/aida/AP1WRLvz3AXxZDePj6JluPC5MMv4V1yebcoVBcY6WCMOeGpAntRxBzOvY7b2h_tCnOhMEJPSdVldiVKxDWdn__QA6GNSRo39_x6Im8qgjY4pf1XnkEmY8ObmBvYeFPADOdEiIeeg7p6nVfGK7O_PMRepHBMbXneHOGTuoADLHDx5lpufqN3GAu5a36pigkXRhWFD7HA3-YsVNrnPGawdfw0Tkok6axZnYmYXVkZMjXEfrWWVb3jahtpRFUkv3MMg"/>
+<img alt="Sumber Baru Motor Logo" class="w-16 h-16 object-contain" src="{{ asset('images/logo.png') }}"/>
 <span class="font-headline-md text-headline-md font-bold text-primary">Sumber Baru Motor</span>
 </div>
-<div class="hidden md:flex items-center gap-8">
-    <a href="{{ route('front.home') }}" class="font-label-md text-label-md hover:text-primary transition-colors">Home</a>
-    <a href="{{ route('front.tentang') }}" class="font-label-md text-label-md hover:text-primary transition-colors">Tentang Kami</a>
-    <a href="{{ route('front.layanan.index') }}" class="font-label-md text-label-md hover:text-primary transition-colors">Layanan</a>
-    <a href="{{ route('front.berita.index') }}" class="font-label-md text-label-md hover:text-primary transition-colors">Berita</a>
+<div class="hidden md:flex items-center gap-2 bg-slate-50/60 p-1.5 rounded-full border border-slate-100 backdrop-blur-md">
+    <a href="{{ route('front.home') }}" 
+       class="font-label-md text-label-md px-4 py-2 rounded-full transition-all duration-300 font-semibold tracking-wide text-sm
+       {{ request()->routeIs('front.home') ? 'bg-primary text-white shadow-md shadow-primary/20 scale-105' : 'text-slate-600 hover:text-primary hover:bg-white' }}">
+       Home
+    </a>
+
+    <a href="{{ route('front.tentang') }}" 
+       class="font-label-md text-label-md px-4 py-2 rounded-full transition-all duration-300 font-semibold tracking-wide text-sm
+       {{ request()->routeIs('front.tentang') ? 'bg-primary text-white shadow-md shadow-primary/20 scale-105' : 'text-slate-600 hover:text-primary hover:bg-white' }}">
+       Tentang Kami
+    </a>
+
+    <a href="{{ route('front.layanan.index') }}" 
+       class="font-label-md text-label-md px-4 py-2 rounded-full transition-all duration-300 font-semibold tracking-wide text-sm
+       {{ request()->routeIs('front.layanan.*') ? 'bg-primary text-white shadow-md shadow-primary/20 scale-105' : 'text-slate-600 hover:text-primary hover:bg-white' }}">
+       Layanan
+    </a>
+
+    <a href="{{ route('front.berita.index') }}" 
+       class="font-label-md text-label-md px-4 py-2 rounded-full transition-all duration-300 font-semibold tracking-wide text-sm
+       {{ request()->routeIs('front.berita.*') ? 'bg-primary text-white shadow-md shadow-primary/20 scale-105' : 'text-slate-600 hover:text-primary hover:bg-white' }}">
+       Berita
+    </a>
+
     <div class="relative group">
-        <button class="flex items-center gap-1 font-label-md text-label-md hover:text-primary transition-colors">
+        <button class="flex items-center gap-1 font-label-md text-label-md px-4 py-2 rounded-full transition-all duration-300 font-semibold tracking-wide text-sm
+           {{ request()->routeIs('front.booking.*') || request()->routeIs('front.status.booking') ? 'bg-primary text-white shadow-md shadow-primary/20 scale-105' : 'text-slate-600 hover:text-primary hover:bg-white' }}">
             Booking
-            <span class="material-symbols-outlined text-[18px]">
+            <span class="material-symbols-outlined text-[18px] transition-transform duration-300 group-hover:rotate-180">
                 expand_more
             </span>
         </button>
 
-    <!-- Dropdown -->
-        <div class="absolute top-full left-0 mt-2 w-56 bg-white border border-outline-variant rounded-xl shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
+        <div class="absolute top-full left-1/2 -translate-x-1/2 mt-3 w-60 bg-white/95 backdrop-blur-md border border-slate-100/80 rounded-2xl shadow-2xl p-1.5 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-50 translate-y-4 group-hover:translate-y-0">
             <a href="{{ route('front.booking.create') }}"
-            class="block px-4 py-3 hover:bg-surface-container-low text-sm">
-            Booking Servis
+               class="block px-4 py-2.5 text-sm rounded-xl transition-all duration-200
+               {{ request()->routeIs('front.booking.create') ? 'text-primary font-bold bg-primary/10' : 'text-slate-600 hover:bg-slate-50 hover:text-primary' }}">
+                Booking Servis
             </a>
-            <a href="{{ route('front.status.booking') }}"class="block px-4 py-3 hover:bg-surface-container-low text-sm border-t border-outline-variant">
+            <a href="{{ route('front.status.booking') }}"
+               class="block px-4 py-2.5 text-sm rounded-xl transition-all duration-200 mt-0.5
+               {{ request()->routeIs('front.status.booking') ? 'text-primary font-bold bg-primary/10' : 'text-slate-600 hover:bg-slate-50 hover:text-primary' }}">
                 Cek Status Booking
             </a>
         </div>
     </div>
-    <a href="{{ route('front.kontak') }}" class="font-label-md text-label-md hover:text-primary transition-colors">Kontak</a>
+
+    <a href="{{ route('front.kontak') }}" 
+       class="font-label-md text-label-md px-4 py-2 rounded-full transition-all duration-300 font-semibold tracking-wide text-sm
+       {{ request()->routeIs('front.kontak') ? 'bg-primary text-white shadow-md shadow-primary/20 scale-105' : 'text-slate-600 hover:text-primary hover:bg-white' }}">
+       Kontak
+    </a>
 </div>
 <div class="flex items-center gap-4">
-<button class="bg-primary text-on-primary px-6 py-2 rounded-lg font-label-md text-label-md hover:opacity-90 active:scale-95 transition-all">Login</button>
+    @guest
+        <a href="{{ route('login') }}"
+           class="bg-primary text-on-primary px-6 py-2 rounded-lg font-label-md text-label-md hover:opacity-90 transition-all">
+            Login
+        </a>
+    @endguest
+ @auth
+    <form method="POST" action="{{ route('logout') }}">
+        @csrf
+        <button type="submit"
+            class="border border-red-500 text-red-500 px-4 py-2 rounded-lg hover:bg-red-500 hover:text-white transition">
+            Logout
+        </button>
+    </form>
+@endauth
 </div>
 </nav>
 </header>

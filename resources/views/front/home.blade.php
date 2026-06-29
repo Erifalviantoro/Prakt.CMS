@@ -8,7 +8,7 @@
 <section class="relative h-[640px] flex items-center overflow-hidden">
 <div class="absolute inset-0 z-0">
 <div class="absolute inset-0 bg-gradient-to-r from-primary/90 via-primary/60 to-transparent z-10"></div>
-<img alt="Mechanic working on high performance motorcycle" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida/AP1WRLu1AvLKeY44YhujvzXigQZX2O3BkzX8KP2EWGf4zqv6FQfo60GGaRnPMD5dEThPtTyxuZMymvzRmvtVqaZXYcxLd0JbKPsrXLU9wJp2DvkQf1h7LaAJR6O3skEVjQzs2qr_zOpmumBgXRAQAUUBAEcwEEYE_rKa8iiG9l-dkBlsCnAAFdbXcS4K50rsg-xJmk6NaUiGT18k8eyIvRbN1VQ1Ho8JguQL8kEvuElm-qEcYc5xD56dWr2qOzre"/>
+<img class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida/AP1WRLu1AvLKeY44YhujvzXigQZX2O3BkzX8KP2EWGf4zqv6FQfo60GGaRnPMD5dEThPtTyxuZMymvzRmvtVqaZXYcxLd0JbKPsrXLU9wJp2DvkQf1h7LaAJR6O3skEVjQzs2qr_zOpmumBgXRAQAUUBAEcwEEYE_rKa8iiG9l-dkBlsCnAAFdbXcS4K50rsg-xJmk6NaUiGT18k8eyIvRbN1VQ1Ho8JguQL8kEvuElm-qEcYc5xD56dWr2qOzre"/>
 </div>
 <div class="relative z-20 max-w-container-max-width mx-auto px-margin-desktop w-full">
 <div class="max-w-2xl">
@@ -19,10 +19,21 @@
                         Servis resmi dan terpercaya untuk segala jenis motor. Booking online sekarang dan nikmati layanan prima dari teknisi ahli kami.
                     </p>
 <div class="flex flex-wrap gap-4">
-<button class="bg-secondary text-white px-8 py-4 rounded-lg font-label-md text-label-md flex items-center gap-2 hover:bg-secondary/90 transition-all shadow-lg active:scale-95">
-<span class="material-symbols-outlined">calendar_month</span>
-                            Book Service Sekarang
-                        </button>
+@guest
+<a href="{{ route('login') }}"
+   class="bg-secondary text-white px-8 py-4 rounded-lg font-label-md text-label-md flex items-center gap-2 hover:bg-secondary/90 transition-all shadow-lg">
+    <span class="material-symbols-outlined">calendar_month</span>
+    Book Service Sekarang
+</a>
+@endguest
+
+@auth
+<a href="{{ route('front.booking.create') }}"
+   class="bg-secondary text-white px-8 py-4 rounded-lg font-label-md text-label-md flex items-center gap-2 hover:bg-secondary/90 transition-all shadow-lg">
+    <span class="material-symbols-outlined">calendar_month</span>
+    Book Service Sekarang
+</a>
+@endauth
 <button class="border-2 border-white text-white px-8 py-4 rounded-lg font-label-md text-label-md hover:bg-white hover:text-primary transition-all active:scale-95">
                             Lihat Promo
                         </button>
@@ -69,7 +80,19 @@
 <span class="material-symbols-outlined text-[32px]">ev_station</span>
 </div>
 <h3 class="font-headline-md text-[20px] mb-4">Tune Up Injeksi</h3>
-<button class="mt-auto w-full py-3 text-secondary border border-secondary rounded-lg font-label-md hover:bg-secondary hover:text-white transition-all">Booking Sekarang</button>
+@guest
+<a href="{{ route('login') }}"
+   class="mt-auto w-full py-3 text-center text-secondary border border-secondary rounded-lg font-label-md hover:bg-secondary hover:text-white transition-all block">
+    Booking Sekarang
+</a>
+@endguest
+
+@auth
+<a href="{{ route('front.booking.create') }}"
+   class="mt-auto w-full py-3 text-center text-secondary border border-secondary rounded-lg font-label-md hover:bg-secondary hover:text-white transition-all block">
+    Booking Sekarang
+</a>
+@endauth
 </div>
 <!-- Card 2 -->
 <div class="bg-white p-8 rounded-xl border border-outline-variant hover-lift shadow-sm flex flex-col items-center text-center">
@@ -77,7 +100,19 @@
 <span class="material-symbols-outlined text-[32px]">oil_barrel</span>
 </div>
 <h3 class="font-headline-md text-[20px] mb-4">Ganti Oli &amp; Filter</h3>
-<button class="mt-auto w-full py-3 text-secondary border border-secondary rounded-lg font-label-md hover:bg-secondary hover:text-white transition-all">Booking Sekarang</button>
+@guest
+<a href="{{ route('login') }}"
+   class="mt-auto w-full py-3 text-center text-secondary border border-secondary rounded-lg font-label-md hover:bg-secondary hover:text-white transition-all block">
+    Booking Sekarang
+</a>
+@endguest
+
+@auth
+<a href="{{ route('front.booking.create') }}"
+   class="mt-auto w-full py-3 text-center text-secondary border border-secondary rounded-lg font-label-md hover:bg-secondary hover:text-white transition-all block">
+    Booking Sekarang
+</a>
+@endauth
 </div>
 <!-- Card 3 -->
 <div class="bg-white p-8 rounded-xl border border-outline-variant hover-lift shadow-sm flex flex-col items-center text-center">
@@ -85,7 +120,19 @@
 <span class="material-symbols-outlined text-[32px]">settings_input_component</span>
 </div>
 <h3 class="font-headline-md text-[20px] mb-4">Servis CVT</h3>
-<button class="mt-auto w-full py-3 text-secondary border border-secondary rounded-lg font-label-md hover:bg-secondary hover:text-white transition-all">Booking Sekarang</button>
+@guest
+<a href="{{ route('login') }}"
+   class="mt-auto w-full py-3 text-center text-secondary border border-secondary rounded-lg font-label-md hover:bg-secondary hover:text-white transition-all block">
+    Booking Sekarang
+</a>
+@endguest
+
+@auth
+<a href="{{ route('front.booking.create') }}"
+   class="mt-auto w-full py-3 text-center text-secondary border border-secondary rounded-lg font-label-md hover:bg-secondary hover:text-white transition-all block">
+    Booking Sekarang
+</a>
+@endauth
 </div>
 <!-- Card 4 -->
 <div class="bg-white p-8 rounded-xl border border-outline-variant hover-lift shadow-sm flex flex-col items-center text-center">
@@ -93,7 +140,19 @@
 <span class="material-symbols-outlined text-[32px]">precision_manufacturing</span>
 </div>
 <h3 class="font-headline-md text-[20px] mb-4">Overhaul Mesin</h3>
-<button class="mt-auto w-full py-3 text-secondary border border-secondary rounded-lg font-label-md hover:bg-secondary hover:text-white transition-all">Booking Sekarang</button>
+@guest
+<a href="{{ route('login') }}"
+   class="mt-auto w-full py-3 text-center text-secondary border border-secondary rounded-lg font-label-md hover:bg-secondary hover:text-white transition-all block">
+    Booking Sekarang
+</a>
+@endguest
+
+@auth
+<a href="{{ route('front.booking.create') }}"
+   class="mt-auto w-full py-3 text-center text-secondary border border-secondary rounded-lg font-label-md hover:bg-secondary hover:text-white transition-all block">
+    Booking Sekarang
+</a>
+@endauth
 </div>
 <!-- Card 5 -->
 <div class="bg-white p-8 rounded-xl border border-outline-variant hover-lift shadow-sm flex flex-col items-center text-center">
@@ -101,7 +160,19 @@
 <span class="material-symbols-outlined text-[32px]">bolt</span>
 </div>
 <h3 class="font-headline-md text-[20px] mb-4">Kelistrikan &amp; Aki</h3>
-<button class="mt-auto w-full py-3 text-secondary border border-secondary rounded-lg font-label-md hover:bg-secondary hover:text-white transition-all">Booking Sekarang</button>
+@guest
+<a href="{{ route('login') }}"
+   class="mt-auto w-full py-3 text-center text-secondary border border-secondary rounded-lg font-label-md hover:bg-secondary hover:text-white transition-all block">
+    Booking Sekarang
+</a>
+@endguest
+
+@auth
+<a href="{{ route('front.booking.create') }}"
+   class="mt-auto w-full py-3 text-center text-secondary border border-secondary rounded-lg font-label-md hover:bg-secondary hover:text-white transition-all block">
+    Booking Sekarang
+</a>
+@endauth
 </div>
 </div>
 </section>
@@ -167,10 +238,21 @@
 <h2 class="font-headline-lg text-headline-lg text-white mb-6">Siap Memberikan yang Terbaik untuk Motor Anda.</h2>
 <p class="font-body-lg text-white/70 mb-10">Hubungi kami via WhatsApp atau Booking Langsung untuk mendapatkan antrean prioritas.</p>
 <div class="flex flex-wrap justify-center gap-6">
-<button class="bg-secondary text-white px-10 py-4 rounded-xl font-label-md text-label-md flex items-center gap-3 hover:scale-105 transition-all shadow-lg">
-<span class="material-symbols-outlined">calendar_add_on</span>
-                            Booking Servis Sekarang
-                        </button>
+@guest
+<a href="{{ route('login') }}"
+   class="bg-secondary text-white px-10 py-4 rounded-xl font-label-md flex items-center gap-3 hover:scale-105 transition-all shadow-lg">
+    <span class="material-symbols-outlined">calendar_add_on</span>
+    Booking Servis Sekarang
+</a>
+@endguest
+
+@auth
+<a href="{{ route('front.booking.create') }}"
+   class="bg-secondary text-white px-10 py-4 rounded-xl font-label-md flex items-center gap-3 hover:scale-105 transition-all shadow-lg">
+    <span class="material-symbols-outlined">calendar_add_on</span>
+    Booking Servis Sekarang
+</a>
+@endauth
 <button class="bg-white text-primary px-10 py-4 rounded-xl font-label-md text-label-md flex items-center gap-3 hover:scale-105 transition-all shadow-lg">
 <span class="material-symbols-outlined">chat</span>
                             Hubungi WhatsApp

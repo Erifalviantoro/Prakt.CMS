@@ -26,6 +26,7 @@ use App\Http\Controllers\Admin\LaporanController;
 |
 */
 Route::prefix('admin')
+    ->middleware(['auth', 'admin'])
     ->name('admin.')
     ->group(function () {
 
@@ -71,10 +72,13 @@ Route::post(
     [DetailServisController::class, 'selesai']
 )->name('admin.detailservis.selesai'); // <-- Tambahkan 'admin.' di sini
 
+
+Route::get('/', function () {
+    return redirect()->route('front.home');
+});
 Route::prefix('front')->name('front.')->group(function () {
-    
     // Halaman Utama & Statis
-    Route::get('/home', [FrontController::class, 'home'])->name('home');
+    Route::get('/', [FrontController::class, 'home'])->name('home');
     Route::get('/tentang-kami', [FrontController::class, 'tentang'])->name('tentang');
     Route::get('/kontak', [FrontController::class, 'kontak'])->name('kontak');
 
@@ -87,8 +91,13 @@ Route::prefix('front')->name('front.')->group(function () {
     Route::get('/layanan/{id}', [FrontController::class, 'detailLayanan'])->name('layanan.show');
 
     // Fitur Booking
-    Route::get('/booking', [FrontController::class, 'booking'])->name('booking.create'); // Sesuai file create.blade.php
-    Route::post('/booking', [FrontController::class, 'storeBooking'])->name('booking.store');
+    Route::middleware('auth')->group(function () {
+        Route::get('/booking', [FrontController::class, 'booking'])
+            ->name('booking.create');
+
+        Route::post('/booking', [FrontController::class, 'storeBooking'])
+            ->name('booking.store');
+    });
     Route::get('/booking/sukses', [FrontController::class, 'bookingSukses'])->name('booking.sukses');
     
     // Cek Status Servis
@@ -98,12 +107,6 @@ Route::get('/status-booking', [FrontController::class, 'statusBooking'])
 Route::post('/status-booking', [FrontController::class, 'cariStatusBooking'])
     ->name('status.booking.cari');
 });
-
-Route::get('/teknisi/{id}/dashboard', 
-    [App\Http\Controllers\TeknisiDashboardController::class, 'index']
-)->name('teknisi.dashboard');
-
-
 
 Route::get('/profil', function () {
     return view('profil');

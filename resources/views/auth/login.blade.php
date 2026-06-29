@@ -58,7 +58,11 @@
                 <h2 class="text-xl font-semibold text-primary">Selamat Datang</h2>
                 <p class="text-on-surface-variant text-sm mt-1">Silakan masuk ke akun Anda</p>
             </div>
-
+@if(session('success'))
+    <div class="mb-4 p-3 rounded-lg bg-green-100 border border-green-300 text-green-700 text-center">
+        {{ session('success') }}
+    </div>
+@endif
             @if (session('status'))
                 <div class="mb-4 text-sm font-medium text-green-600 bg-green-50 p-3 rounded-lg text-center border border-green-200">
                     {{ session('status') }}
@@ -72,8 +76,8 @@
                     <label for="email" class="block font-semibold text-sm text-primary">Email</label>
                     <div class="relative group">
                         <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant/60 group-focus-within:text-primary transition-standard">mail</span>
-                        <input id="email" type="email" name="email" value="{{ old('email') }}" required autofocus placeholder="admin123@gmail.com" 
-                            class="w-full pl-10 pr-4 py-2.5 rounded-lg border border-outline-variant bg-surface/50 focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/10 transition-standard font-medium text-sm"/>
+                        <input id="email" type="email" name="email"value="{{ old('email') }}" required autofocus placeholder="Masukkan email"
+                        class="w-full pl-10 pr-4 py-2.5 rounded-lg border border-outline-variant bg-surface/50 focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/10 transition-standard font-medium text-sm"/>
                     </div>
                     @if($errors->has('email'))
                         <p class="text-xs text-red-600 mt-1">{{ $errors->first('email') }}</p>

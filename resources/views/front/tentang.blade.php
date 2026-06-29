@@ -3,8 +3,15 @@
 @section('title', 'Tentang')
 
 @section('content')
-<main class="overflow-x-hidden w-full"> <section class="bg-gradient-to-br from-slate-900 via-blue-950 to-slate-900 h-[500px] flex items-center justify-center text-center px-4">
-        <div class="max-w-3xl">
+<main class="overflow-x-hidden w-full"> 
+    <!-- BENGKEL BANNER: Menggunakan background image overlay agar lebih estetik -->
+    <section class="relative h-[500px] flex items-center justify-center text-center px-4 overflow-hidden">
+        <div class="absolute inset-0 z-0">
+            <!-- Overlay gelap agar teks putih tetap kontras dan mudah dibaca -->
+            <div class="absolute inset-0 bg-slate-950/80 z-10"></div>
+            <img class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBJv7I41f-3IR3R0WXOzgdQAqcWi-57IuE3DsEciKbT1Y8vfxdJexrFuiX9cayLI9oh8z3OX9b1hIY9-7v65HdulDqkkkMtc5iS4jW0bNW2Kat2c1WVog3U19qLjFzNN1PWBCsMv6cONGJiMwjdeQNomtgqxg-am2evHxsZgehTW_omEuK8LFoU3pFay9ePu_VPNubSZ4T_VMYsDa0o8O0nL-7714dYmTnbo3ulakRKD4cDXOlW53t6Re5D6sFKYrh79NXf2PBmp1YN" alt="Workshop Banner"/>
+        </div>
+        <div class="relative z-20 max-w-3xl">
             <h1 class="text-4xl md:text-5xl font-bold text-white mb-6">Dedikasi Performa Terbaik Sejak 1982</h1>
             <p class="text-lg text-white/80 max-w-2xl mx-auto">Membangun kepercayaan melalui kualitas layanan dan integritas dalam dunia otomotif roda dua di Indonesia.</p>
         </div>
@@ -71,55 +78,117 @@
         </div>
     </section>
 
+    <!-- PENCAPAIAN KAMI (Sesuai Request + Efek Bergerak) -->
     <section class="py-24 bg-slate-50 px-4">
         <div class="max-w-7xl mx-auto">
             <div class="text-center mb-16">
                 <h2 class="text-3xl font-bold text-slate-900 mb-4">Pencapaian Kami</h2>
-                <p class="text-slate-600">Kepercayaan pelanggan yang telah kami bangun selama puluhan tahun.</p>
+                <p class="text-slate-600">
+                    Komitmen kami dalam memberikan layanan terbaik kepada setiap pelanggan.
+                </p>
             </div>
+
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-                <div class="bg-white p-8 rounded-xl text-center shadow-sm border border-slate-100">
-                    <h3 class="text-4xl font-bold text-amber-500 mb-2">{{ $totalBooking ?? '10.000+' }}</h3>
-                    <p class="text-slate-600">Motor Diservis</p>
+                <div class="bg-white p-8 rounded-xl text-center shadow-sm border border-slate-100 transform hover:-translate-y-2 hover:shadow-md transition-all duration-300">
+                    <h3 class="text-4xl font-bold text-amber-500 mb-2">
+                        {{ $totalBooking ?? 0 }}
+                    </h3>
+                    <p class="text-slate-600">Booking Servis</p>
                 </div>
-                <div class="bg-white p-8 rounded-xl text-center shadow-sm border border-slate-100">
-                    <h3 class="text-4xl font-bold text-amber-500 mb-2">{{ $totalPelanggan ?? '5.000+' }}</h3>
-                    <p class="text-slate-600">Pelanggan Aktif</p>
+
+                <div class="bg-white p-8 rounded-xl text-center shadow-sm border border-slate-100 transform hover:-translate-y-2 hover:shadow-md transition-all duration-300">
+                    <h3 class="text-4xl font-bold text-amber-500 mb-2">
+                        {{ $totalPelanggan ?? 0 }}
+                    </h3>
+                    <p class="text-slate-600">Pelanggan Terdaftar</p>
                 </div>
-                <div class="bg-white p-8 rounded-xl text-center shadow-sm border border-slate-100">
-                    <h3 class="text-4xl font-bold text-amber-500 mb-2">{{ $totalMekanik ?? '15+' }}</h3>
+
+                <div class="bg-white p-8 rounded-xl text-center shadow-sm border border-slate-100 transform hover:-translate-y-2 hover:shadow-md transition-all duration-300">
+                    <h3 class="text-4xl font-bold text-amber-500 mb-2">
+                        {{ $totalMekanik ?? 0 }}
+                    </h3>
                     <p class="text-slate-600">Mekanik Profesional</p>
                 </div>
-                <div class="bg-white p-8 rounded-xl text-center shadow-sm border border-slate-100">
-                    <h3 class="text-4xl font-bold text-amber-500 mb-2">42</h3>
-                    <p class="text-slate-600">Tahun Pengalaman</p>
+
+                <div class="bg-white p-8 rounded-xl text-center shadow-sm border border-slate-100 transform hover:-translate-y-2 hover:shadow-md transition-all duration-300">
+                    <h3 class="text-4xl font-bold text-amber-500 mb-2">
+                        {{ $totalLayanan ?? 0 }}
+                    </h3>
+                    <p class="text-slate-600">Jenis Layanan Servis</p>
                 </div>
             </div>
         </div>
     </section>
 
+    <!-- MENGAPA MEMILIH KAMI (Sesuai Request + Efek Bergerak) -->
     <section class="py-24 bg-white px-4">
         <div class="max-w-7xl mx-auto">
             <div class="text-center mb-16">
-                <h2 class="text-3xl font-bold text-slate-900 mb-4">Mengapa Memilih Kami?</h2>
+                <h2 class="text-3xl font-bold text-slate-900 mb-4">
+                    Mengapa Memilih Kami?
+                </h2>
+                <p class="text-slate-600">
+                    Kami memberikan layanan servis motor yang profesional, cepat, dan terpercaya.
+                </p>
             </div>
+
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                <div class="bg-slate-50 p-8 rounded-xl shadow-sm border border-slate-100">
-                    <h3 class="font-bold text-slate-900 mb-3">Sparepart Original</h3>
-                    <p class="text-slate-600">Menggunakan suku cadang asli dan berkualitas tinggi.</p>
+                <div class="bg-slate-50 p-8 rounded-xl shadow-sm border border-slate-100 transform hover:-translate-y-2 hover:shadow-md transition-all duration-300">
+                    <h3 class="font-bold text-slate-900 mb-3">
+                        Mekanik Berpengalaman
+                    </h3>
+                    <p class="text-slate-600">
+                        Seluruh pekerjaan servis ditangani oleh mekanik yang berpengalaman sehingga kualitas pengerjaan lebih terjamin.
+                    </p>
                 </div>
-                <div class="bg-slate-50 p-8 rounded-xl shadow-sm border border-slate-100">
-                    <h3 class="font-bold text-slate-900 mb-3">Harga Transparan</h3>
-                    <p class="text-slate-600">Tidak ada biaya tersembunyi dalam setiap layanan servis kami.</p>
+
+                <div class="bg-slate-50 p-8 rounded-xl shadow-sm border border-slate-100 transform hover:-translate-y-2 hover:shadow-md transition-all duration-300">
+                    <h3 class="font-bold text-slate-900 mb-3">
+                        Booking Servis Online
+                    </h3>
+                    <p class="text-slate-600">
+                        Pelanggan dapat melakukan booking servis secara online sehingga proses menjadi lebih mudah tanpa harus mengantre lama.
+                    </p>
                 </div>
-                <div class="bg-slate-50 p-8 rounded-xl shadow-sm border border-slate-100">
-                    <h3 class="font-bold text-slate-900 mb-3">Garansi Servis</h3>
-                    <p class="text-slate-600">Memberikan jaminan kualitas hasil pengerjaan mekanik kami.</p>
+
+                <div class="bg-slate-50 p-8 rounded-xl shadow-sm border border-slate-100 transform hover:-translate-y-2 hover:shadow-md transition-all duration-300">
+                    <h3 class="font-bold text-slate-900 mb-3">
+                        Sparepart Berkualitas
+                    </h3>
+                    <p class="text-slate-600">
+                        Menggunakan sparepart berkualitas untuk menjaga performa dan keamanan kendaraan setelah servis.
+                    </p>
+                </div>
+
+                <div class="bg-slate-50 p-8 rounded-xl shadow-sm border border-slate-100 transform hover:-translate-y-2 hover:shadow-md transition-all duration-300">
+                    <h3 class="font-bold text-slate-900 mb-3">
+                        Proses Servis Transparan
+                    </h3>
+                    <p class="text-slate-600">
+                        Pelanggan dapat mengetahui status booking dan proses pengerjaan servis dengan lebih jelas.
+                    </p>
+                </div>
+
+                <div class="bg-slate-50 p-8 rounded-xl shadow-sm border border-slate-100 transform hover:-translate-y-2 hover:shadow-md transition-all duration-300">
+                    <h3 class="font-bold text-slate-900 mb-3">
+                        Harga Kompetitif
+                    </h3>
+                    <p class="text-slate-600">
+                        Biaya servis dan penggantian sparepart disesuaikan dengan kualitas layanan yang diberikan.
+                    </p>
+                </div>
+
+                <div class="bg-slate-50 p-8 rounded-xl shadow-sm border border-slate-100 transform hover:-translate-y-2 hover:shadow-md transition-all duration-300">
+                    <h3 class="font-bold text-slate-900 mb-3">
+                        Pelayanan Ramah
+                    </h3>
+                    <p class="text-slate-600">
+                        Kepuasan pelanggan menjadi prioritas kami melalui pelayanan yang cepat, ramah, dan profesional.
+                    </p>
                 </div>
             </div>
         </div>
     </section>
-
 </main>
 
 <script>
