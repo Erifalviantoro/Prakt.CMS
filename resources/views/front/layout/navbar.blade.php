@@ -38,42 +38,90 @@
             </span>
         </button>
 
-        <div class="absolute top-full left-1/2 -translate-x-1/2 mt-3 w-60 bg-white/95 backdrop-blur-md border border-slate-100/80 rounded-2xl shadow-2xl p-1.5 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-50 translate-y-4 group-hover:translate-y-0">
-            <a href="{{ route('front.booking.create') }}"
-               class="block px-4 py-2.5 text-sm rounded-xl transition-all duration-200
-               {{ request()->routeIs('front.booking.create') ? 'text-primary font-bold bg-primary/10' : 'text-slate-600 hover:bg-slate-50 hover:text-primary' }}">
-                Booking Servis
-            </a>
-            <a href="{{ route('front.status.booking') }}"
-               class="block px-4 py-2.5 text-sm rounded-xl transition-all duration-200 mt-0.5
-               {{ request()->routeIs('front.status.booking') ? 'text-primary font-bold bg-primary/10' : 'text-slate-600 hover:bg-slate-50 hover:text-primary' }}">
-                Cek Status Booking
-            </a>
-        </div>
-    </div>
+<div class="absolute top-full left-1/2 -translate-x-1/2 mt-3 w-60 bg-white/95 backdrop-blur-md border border-slate-100/80 rounded-2xl shadow-2xl p-1.5 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-50 translate-y-4 group-hover:translate-y-0">
+    <a href="{{ route('front.booking.create') }}"
+       class="block px-4 py-2.5 text-sm rounded-xl transition-all duration-200
+       {{ request()->routeIs('front.booking.create') ? 'text-primary font-bold bg-primary/10' : 'text-slate-600 hover:bg-slate-50 hover:text-primary' }}">
+        Booking Servis
+    </a>
 
+    <a href="{{ route('front.status.booking') }}"
+       class="block px-4 py-2.5 text-sm rounded-xl transition-all duration-200 mt-0.5
+       {{ request()->routeIs('front.status.booking') ? 'text-primary font-bold bg-primary/10' : 'text-slate-600 hover:bg-slate-50 hover:text-primary' }}">
+        Cek Status Booking
+    </a>
+</div>
+</div>
     <a href="{{ route('front.kontak') }}" 
        class="font-label-md text-label-md px-4 py-2 rounded-full transition-all duration-300 font-semibold tracking-wide text-sm
        {{ request()->routeIs('front.kontak') ? 'bg-primary text-white shadow-md shadow-primary/20 scale-105' : 'text-slate-600 hover:text-primary hover:bg-white' }}">
        Kontak
     </a>
 </div>
+
 <div class="flex items-center gap-4">
+
     @guest
         <a href="{{ route('login') }}"
-           class="bg-primary text-on-primary px-6 py-2 rounded-lg font-label-md text-label-md hover:opacity-90 transition-all">
+           class="bg-primary text-white px-6 py-2 rounded-lg font-semibold hover:opacity-90 transition">
             Login
         </a>
     @endguest
- @auth
-    <form method="POST" action="{{ route('logout') }}">
-        @csrf
-        <button type="submit"
-            class="border border-red-500 text-red-500 px-4 py-2 rounded-lg hover:bg-red-500 hover:text-white transition">
-            Logout
+
+    @auth
+
+    <div class="relative group">
+
+        <button
+            class="flex items-center gap-2 px-4 py-2 rounded-xl hover:bg-slate-100 transition">
+
+            <span class="material-symbols-outlined">
+                account_circle
+            </span>
+
+            Halo, {{ Auth::user()->name }}
+
+            <span class="material-symbols-outlined text-sm">
+                expand_more
+            </span>
+
         </button>
-    </form>
-@endauth
+
+        <div
+            class="absolute right-0 mt-2 w-60 bg-white rounded-2xl shadow-xl border border-slate-200 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-50">
+
+            <a href="{{ route('front.dashboard') }}"
+               class="block px-5 py-3 hover:bg-slate-50">
+                Dashboard
+            </a>
+
+            <a href="{{ route('front.riwayat') }}"
+               class="block px-5 py-3 hover:bg-slate-50">
+                Riwayat Booking
+            </a>
+
+            <a href="{{ route('front.profile') }}"
+               class="block px-5 py-3 hover:bg-slate-50">
+                Profil Saya
+            </a>
+
+            <hr>
+
+            <form method="POST" action="{{ route('logout') }}">
+                @csrf
+
+                <button
+                    class="w-full text-left px-5 py-3 text-red-600 hover:bg-red-50">
+                    Logout
+                </button>
+
+            </form>
+
+        </div>
+
+    </div>
+
+    @endauth
 </div>
 </nav>
 </header>

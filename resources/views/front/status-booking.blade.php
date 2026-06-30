@@ -81,7 +81,7 @@
                                     <span class="inline-flex items-center gap-1.5 px-3 py-1 bg-amber-50 text-amber-700 rounded-full text-xs font-bold uppercase tracking-wider">
                                         <span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span> Menunggu
                                     </span>
-                                @elseif(in_array(strtolower($booking->status), ['dikonfirmasi', 'proses', 'disetujui']))
+                                @elseif(in_array(strtolower($booking->status), ['dikonfirmasi', 'proses', 'disetujui'])) {{--  Selesai Diperbaiki Di Sini --}}
                                     <span class="inline-flex items-center gap-1.5 px-3 py-1 bg-blue-50 text-blue-700 rounded-full text-xs font-bold uppercase tracking-wider">
                                         <span class="w-1.5 h-1.5 rounded-full bg-blue-500"></span> Dikonfirmasi
                                     </span>
@@ -129,7 +129,7 @@
                             <div class="mt-4">
                                 <p class="text-slate-400 text-xs font-semibold uppercase tracking-wider mb-1.5">Keluhan/Catatan Pelanggan</p>
                                 <div class="bg-slate-50/80 p-3.5 rounded-xl text-slate-600 text-sm border border-slate-100 leading-relaxed">
-                                    "{{ $booking->keluhan ?? 'Tidak ada keluhan tertulis.' }}"
+                                    "{!! $booking->keluhan ?? 'Tidak ada keluhan tertulis.' !!}"
                                 </div>
                             </div>
 
@@ -143,7 +143,7 @@
                                             </h5>
                                         </div>
 
-                                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 text-sm">
+                                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 text-sm mb-4">
                                             <div class="bg-white/5 p-3 rounded-lg border border-white/10">
                                                 <p class="text-white/50 text-xs mb-0.5">Mekanik Handal</p>
                                                 <p class="font-bold text-white">{{ $booking->detailServis->teknisi->nama ?? 'Menunjuk Teknisi...' }}</p>
@@ -163,7 +163,7 @@
                                         </div>
 
                                         @if($booking->detailServis->transaksi)
-                                            <div class="mt-4 pt-4 border-t border-white/10 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+                                            <div class="mt-4 pt-4 border-t border-white/10 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                                                 <div>
                                                     <span class="text-white/40 text-xs block">Total Biaya Akhir</span>
                                                     <span class="text-xl font-extrabold text-white">
@@ -171,15 +171,24 @@
                                                     </span>
                                                 </div>
 
-                                                <div>
+                                                <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full md:w-auto">
                                                     @if(in_array(strtolower($booking->detailServis->transaksi->status_pembayaran), ['lunas', 'sukses']))
-                                                        <span class="px-4 py-1.5 bg-green-500/20 border border-green-500/30 text-green-400 rounded-lg text-xs font-bold uppercase tracking-wider inline-block">
+                                                        <span class="px-4 py-1.5 bg-emerald-500/20 border border-emerald-500/30 text-emerald-400 rounded-lg text-xs font-bold uppercase tracking-wider inline-block text-center">
                                                             ✓ Pembayaran Lunas
                                                         </span>
                                                     @else
-                                                        <span class="px-4 py-1.5 bg-amber-500/20 border border-amber-500/30 text-amber-400 rounded-lg text-xs font-bold uppercase tracking-wider inline-block animate-pulse">
+                                                        <span class="px-4 py-1.5 bg-amber-500/20 border border-amber-500/30 text-amber-400 rounded-lg text-xs font-bold uppercase tracking-wider inline-block text-center md:animate-pulse">
                                                             🛈 Menunggu Pembayaran
                                                         </span>
+                                                        
+                                                        <a href="https://wa.me/6281234567890?text={{ urlencode('Halo Admin MotoFix, saya ingin mengonfirmasi pembayaran untuk:'."\n\n".'• Kode Booking: #BKG-'.str_pad($booking->id, 5, '0', STR_PAD_LEFT)."\n".'• Nama Pelanggan: '.$booking->pelanggan->nama."\n".'• Total Biaya: Rp '.number_format($booking->detailServis->transaksi->total_biaya, 0, ',', '.')."\n\n".'Berikut saya lampirkan bukti transfernya.') }}" 
+                                                           target="_blank"
+                                                           class="inline-flex items-center justify-center gap-2 px-4 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-bold uppercase tracking-wider transition-all shadow-md active:scale-95">
+                                                            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                                                                <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946C.06 5.348 5.397.01 12.008.01c3.202.001 6.212 1.246 8.477 3.514 2.266 2.268 3.507 5.28 3.505 8.484-.004 6.657-5.34 11.997-11.953 11.997-2.005-.001-3.973-.503-5.729-1.457L0 24zm6.59-4.846c1.6.95 3.188 1.449 4.825 1.451 5.436 0 9.86-4.37 9.864-9.742.002-2.599-1.012-5.042-2.856-6.886-1.843-1.844-4.291-2.859-6.892-2.86-5.445 0-9.87 4.374-9.875 9.745-.002 1.777.472 3.51 1.371 5.042l-.993 3.626 3.756-.976zm11.455-6.812c-.29-.145-1.714-.836-1.979-.932-.266-.096-.459-.145-.653.145-.193.291-.748.932-.917 1.125-.169.193-.338.217-.627.072-.29-.145-1.224-.445-2.33-1.417-.86-.757-1.44-1.693-1.609-1.982-.169-.29-.018-.447.126-.59.13-.13.29-.338.435-.507.145-.169.193-.29.29-.483.096-.193.048-.361-.024-.507-.072-.145-.653-1.545-.894-2.124-.235-.564-.474-.488-.653-.497-.169-.008-.361-.01-.554-.01-.193 0-.507.072-.772.361-.266.291-1.013.977-1.013 2.383 0 1.407 1.038 2.766 1.182 2.959.145.193 2.043 3.08 4.949 4.3c.691.291 1.231.465 1.652.596.694.218 1.327.187 1.826.113.557-.082 1.714-.691 1.956-1.359.242-.667.242-1.24.17-1.359-.073-.118-.266-.19-.555-.335z"/>
+                                                            </svg>
+                                                            Konfirmasi Pembayaran
+                                                        </a>
                                                     @endif
                                                 </div>
                                             </div>

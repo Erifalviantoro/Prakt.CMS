@@ -83,26 +83,24 @@ class FrontController extends Controller
             'tahun_pembuatan'   => $request->tahun_pembuatan,
         ]);
 
-        Booking::create([
-            'pelanggan_id'      => $pelanggan->id,
-            'kendaraan_id'      => $kendaraan->id,
-            'layanan_id'        => $request->layanan_id,
-            'tanggal_booking'   => $request->tanggal_booking,
-            'keluhan'           => $request->keluhan,
-            'status'            => 'Menunggu',
-        ]);
+$booking = Booking::create([
+    'pelanggan_id'      => $pelanggan->id,
+    'kendaraan_id'      => $kendaraan->id,
+    'layanan_id'        => $request->layanan_id,
+    'tanggal_booking'   => $request->tanggal_booking,
+    'keluhan'           => $request->keluhan,
+    'status'            => 'Menunggu',
+]);
 
-        // Perbaikan: Diarahkan ke front.booking.sukses
-        return redirect()
-            ->route('front.booking.sukses')
-            ->with('success', 'Booking berhasil dikirim')
-            ->with('nama_pelanggan', $request->nama)
-            ->with('booking_id', Booking::latest()->first()->id);
+return redirect()
+    ->route('front.booking.sukses')
+    ->with('success', 'Booking berhasil dikirim')
+    ->with('booking_id', $booking->id);
     }
 
-    public function bookingSukses()
+   public function bookingSukses()
     {
-        $booking = Booking::latest()->first();
+        $booking = Booking::find(session('booking_id'));
         return view('front.booking.sukses', compact('booking'));
     }
 
@@ -132,5 +130,127 @@ public function cariStatusBooking(Request $request)
     return view('front.status-booking', compact(
         'bookings'
     ));
+}
+public function dashboard()
+{
+    return view('front.pelanggan.dashboard');
+}
+
+public function profile()
+{
+    $pelanggan = Pelanggan::where('email', auth()->user()->email)->first();
+
+    if (!$pelanggan) {
+        return view('front.pelanggan.profile', [
+            'pelanggan' => null,
+            'kendaraan' => null,
+            'totalBooking' => 0,
+            'bookingSelesai' => 0,
+        ]);
+    }
+
+    $kendaraan = Kendaraan::whereHas('bookings', function ($q) use ($pelanggan) {
+        $q->where('pelanggan_id', $pelanggan->id);
+    })->latest()->first();
+
+    $totalBooking = Booking::where('pelanggan_id', $pelanggan->id)->count();
+
+    $bookingSelesai = Booking::where('pelanggan_id', $pelanggan->id)
+        ->where('status', 'Selesai')
+        ->count();
+
+    return view('front.pelanggan.profile', compact(
+        'pelanggan',
+        'kendaraan',
+        'totalBooking',
+        'bookingSelesai'
+    ));
+}
+
+public function riwayat()
+{
+    $bookings = Booking::with([
+        'kendaraan',
+        'layanan',
+        'pelanggan'
+    ])
+    ->latest()
+    ->paginate(10);
+
+    return view(
+        'front.pelanggan.riwayat',
+        compact('bookings')
+    );
+}
+public function detailRiwayat($id)
+{
+   $booking = Booking::with([
+    'layanan',
+    'kendaraan',
+    'pelanggan',
+    'detailServis.teknisi',
+    'detailServis.transaksi',
+])->findOrFail($id);
+
+    return view('front.pelanggan.detail-riwayat', compact('booking'));
+}
+public function editProfile()
+{
+    $pelanggan = Pelanggan::where('email', auth()->user()->email)->first();
+
+    if (!$pelanggan) {
+        return view('front.pelanggan.edit-profile', [
+            'pelanggan' => null,
+            'kendaraan' => null,
+        ]);
+    }
+
+    $kendaraan = Kendaraan::whereHas('bookings', function ($q) use ($pelanggan) {
+        $q->where('pelanggan_id', $pelanggan->id);
+    })->latest()->first();
+
+    return view('front.pelanggan.edit-profile', compact(
+        'pelanggan',
+        'kendaraan'
+    ));
+}
+public function updateProfile(Request $request)
+{
+    $request->validate([
+        'nama' => 'required',
+        'email' => 'required|email',
+        'nomor_telepon' => 'required',
+        'alamat' => 'required',
+        'nomor_plat' => 'required',
+        'merk_kendaraan' => 'required',
+        'model_kendaraan' => 'required',
+        'tahun_pembuatan' => 'nullable'
+    ]);
+
+    $pelanggan = Pelanggan::where('email', auth()->user()->email)->first();
+
+    $pelanggan->update([
+        'nama' => $request->nama,
+        'email' => $request->email,
+        'nomor_telepon' => $request->nomor_telepon,
+        'alamat' => $request->alamat,
+    ]);
+
+    $kendaraan = Kendaraan::whereHas('booking', function ($q) use ($pelanggan) {
+        $q->where('pelanggan_id', $pelanggan->id);
+    })->latest()->first();
+
+    if ($kendaraan) {
+        $kendaraan->update([
+            'nomor_plat' => $request->nomor_plat,
+            'merk_kendaraan' => $request->merk_kendaraan,
+            'model_kendaraan' => $request->model_kendaraan,
+            'tahun_pembuatan' => $request->tahun_pembuatan,
+        ]);
+    }
+
+    return redirect()
+        ->route('front.profile')
+        ->with('success', 'Profil berhasil diperbarui.');
 }
 }

@@ -55,12 +55,6 @@
             </button>
 
             <div id="profileMenu" class="hidden absolute right-0 mt-2 w-52 bg-white rounded-lg shadow-lg border z-50 text-slate-800 text-sm">
-                <a href="{{ route('profile.edit') }}" class="block px-4 py-3 hover:bg-slate-50 rounded-t-lg transition-colors">
-                    Edit Profil
-                </a>
-                <a href="{{ route('profile.edit') }}" class="block px-4 py-3 hover:bg-slate-50 transition-colors">
-                    Ganti Password
-                </a>
                 <hr class="border-slate-100">
                 <form method="POST" action="{{ route('logout') }}">
                     @csrf

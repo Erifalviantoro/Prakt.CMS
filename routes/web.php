@@ -106,8 +106,25 @@ Route::get('/status-booking', [FrontController::class, 'statusBooking'])
 
 Route::post('/status-booking', [FrontController::class, 'cariStatusBooking'])
     ->name('status.booking.cari');
-});
 
+   Route::get('/dashboard', [FrontController::class, 'dashboard'])
+        ->name('dashboard');
+
+    Route::get('/profile', [FrontController::class, 'profile'])
+        ->name('profile');
+
+    Route::get('/riwayat', [FrontController::class, 'riwayat'])
+        ->name('riwayat');
+
+    Route::get('/riwayat/{id}', [FrontController::class, 'detailRiwayat'])
+    ->name('riwayat.show');
+    
+     Route::get('/profile/edit', [FrontController::class, 'editProfile'])
+        ->name('profile.edit');
+
+    Route::put('/profile/update', [FrontController::class, 'updateProfile'])
+        ->name('profile.update');
+});
 Route::get('/profil', function () {
     return view('profil');
 })->name('profil');
