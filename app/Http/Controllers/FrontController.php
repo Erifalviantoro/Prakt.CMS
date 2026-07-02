@@ -133,7 +133,65 @@ public function cariStatusBooking(Request $request)
 }
 public function dashboard()
 {
-    return view('front.pelanggan.dashboard');
+    $pelanggan = Pelanggan::where('email', auth()->user()->email)->first();
+
+    if (!$pelanggan) {
+        return view('front.pelanggan.dashboard', [
+            'totalBooking' => 0,
+            'menunggu' => 0,
+            'diproses' => 0,
+            'selesai' => 0,
+            'bookingAktif' => null,
+            'riwayatBooking' => collect(),
+        ]);
+    }
+
+    $bookings = Booking::with([
+        'kendaraan',
+        'layanan',
+        'detailServis'
+    ])
+    ->where('pelanggan_id', $pelanggan->id);
+
+    $totalBooking = $bookings->count();
+
+    $menunggu = (clone $bookings)
+        ->where('status','Menunggu')
+        ->count();
+
+    $diproses = (clone $bookings)
+        ->where('status','Diproses')
+        ->count();
+
+    $selesai = (clone $bookings)
+        ->where('status','Selesai')
+        ->count();
+
+    $bookingAktif = Booking::with([
+        'kendaraan',
+        'layanan'
+    ])
+    ->where('pelanggan_id',$pelanggan->id)
+    ->whereIn('status',['Menunggu','Diproses'])
+    ->latest()
+    ->first();
+
+    $riwayatBooking = Booking::with([
+        'layanan'
+    ])
+    ->where('pelanggan_id',$pelanggan->id)
+    ->latest()
+    ->take(5)
+    ->get();
+
+    return view('front.pelanggan.dashboard', compact(
+        'totalBooking',
+        'menunggu',
+        'diproses',
+        'selesai',
+        'bookingAktif',
+        'riwayatBooking'
+    ));
 }
 
 public function profile()

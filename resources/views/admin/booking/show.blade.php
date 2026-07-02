@@ -10,10 +10,14 @@
 <div class="flex-1 p-margin-desktop">
 
     <div class="mb-8">
+                <nav class="flex items-center gap-2 text-outline mb-2 font-label-sm text-label-sm">
+                    <a class="hover:text-primary" href="#">Dashboard</a>
+                    <span class="material-symbols-outlined text-[14px]">chevron_right</span>
+                    <span class="text-on-surface-variant font-semibold">Manajemen Pelanggan</span>
+                </nav>
         <h2 class="text-3xl font-bold text-primary">
             Detail Booking
         </h2>
-
         <p class="text-on-surface-variant">
             Informasi lengkap booking pelanggan.
         </p>

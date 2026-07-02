@@ -175,16 +175,22 @@ class DetailServisController extends Controller
     }
 
     public function selesai($id)
-    {
-        $detail = DetailServis::findOrFail($id);
+{
+    $detailServis = DetailServis::findOrFail($id);
+    
+    // Update data penunjang mekanik
+    $detailServis->update([
+        'status_servis' => 'selesai',
+        'waktu_selesai' => now()
+    ]);
 
-        $detail->update([
-            'waktu_selesai' => now(),
-            'status_servis' => 'selesai'
+    // 8. Sinkronisasi otomatis: Ubah status Booking utama menjadi Selesai juga!
+    if ($detailServis->booking) {
+        $detailServis->booking->update([
+            'status' => 'Selesai'
         ]);
-
-        return redirect()
-            ->back()
-            ->with('success', 'Servis berhasil diselesaikan');
     }
+
+    return back()->with('success', 'Pekerjaan servis telah berhasil diselesaikan!');
+}
 }

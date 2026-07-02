@@ -4,8 +4,6 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Transaksi;
-use App\Models\Pelanggan;
-use App\Models\Kendaraan;
 use App\Models\DetailServis;
 use Illuminate\Http\Request;
 
@@ -25,7 +23,7 @@ class TransaksiController extends Controller
             'detailServis.booking.kendaraan'
         ]);
 
-        // 3. Gabungkan logika pencarian (Bisa cari berdasarkan nomor invoice, nama pelanggan, atau model kendaraan)
+        // 3. Logika pencarian terintegrasi dengan penyesuaian nama field model kendaraan (8)
         if ($search) {
             $query->where(function ($q) use ($search) {
                 $q->where('id', 'LIKE', "%{$search}%")
@@ -33,8 +31,9 @@ class TransaksiController extends Controller
                       $qPelanggan->where('nama', 'LIKE', "%{$search}%");
                   })
                   ->orWhereHas('detailServis.booking.kendaraan', function ($qKendaraan) use ($search) {
-                      $qKendaraan->where('model', 'LIKE', "%{$search}%")
-                                 ->orWhere('no_polisi', 'LIKE', "%{$search}%")
+                      // 8. Menyesuaikan field pencarian dengan skema database riil (merk/model)
+                      $qKendaraan->where('merk_kendaraan', 'LIKE', "%{$search}%")
+                                 ->orWhere('model_kendaraan', 'LIKE', "%{$search}%")
                                  ->orWhere('nomor_plat', 'LIKE', "%{$search}%");
                   });
             });
@@ -43,17 +42,10 @@ class TransaksiController extends Controller
         // 4. Eksekusi data dengan pagination
         $transaksi = $query->latest()->paginate(10)->withQueryString();
 
-        // 5. Perhitungan statistik box (Menggunakan format string kapital baru)
-        $totalPendapatan = Transaksi::where('status_pembayaran', 'Lunas')
-            ->sum('total_biaya');
-
-        $jumlahPending = Transaksi::whereIn('status_pembayaran', [
-            'Menunggu Pembayaran',
-            'Belum Lunas'
-        ])->count();
-
+        // 5. Perhitungan statistik box 
+        $totalPendapatan = Transaksi::where('status_pembayaran', 'Lunas')->sum('total_biaya');
+        $jumlahPending = Transaksi::whereIn('status_pembayaran', ['Menunggu Pembayaran', 'Belum Lunas'])->count();
         $jumlahTransaksi = Transaksi::count();
-
         $rataRata = $jumlahTransaksi > 0 ? Transaksi::avg('total_biaya') : 0;
 
         return view('admin.transaksi.index', compact(
@@ -68,9 +60,23 @@ class TransaksiController extends Controller
     /**
      * Show the form for creating a new resource.
      */
-    public function create()
+    public function create(Request $request)
     {
-        $detailServis = DetailServis::with(['booking.pelanggan'])
+        // 2. Jika diakses langsung via tombol "Buat Invoice" di halaman Kelola Servis
+        if ($request->has('booking_id')) {
+            $detailServisTerpilih = DetailServis::with(['booking.pelanggan', 'booking.kendaraan'])
+                ->where('booking_id', $request->booking_id)
+                ->where('status_servis', 'selesai')
+                ->firstOrFail();
+
+            return view('admin.transaksi.create', [
+                'detailServis' => collect([$detailServisTerpilih]), // Dibungkus collect agar format di view seragam (looping)
+                'selected_id' => $detailServisTerpilih->id
+            ]);
+        }
+
+        // Alur fallback biasa (jika admin membuka menu Transaksi -> Tambah)
+        $detailServis = DetailServis::with(['booking.pelanggan', 'booking.kendaraan'])
             ->where('status_servis', 'selesai')
             ->doesntHave('transaksi')
             ->get();
@@ -89,15 +95,21 @@ class TransaksiController extends Controller
             'metode_pembayaran' => 'required',
         ]);
 
-        $detail = DetailServis::with('penggunaanSparepart')->findOrFail($request->detail_servis_id);
+        // 6. Eager load relasi booking untuk mempercepat proses update status
+        $detail = DetailServis::with(['penggunaanSparepart', 'booking', 'transaksi'])->findOrFail($request->detail_servis_id);
+
+        // 5. Proteksi keamanan: Cegah manipulasi pembuatan data transaksi ganda
+        if ($detail->transaksi) {
+            return back()->with('error', 'Invoice untuk detail perbaikan servis ini sudah pernah diterbitkan sebelumnya.');
+        }
 
         // HITUNG TOTAL
         $totalJasa = $detail->biaya_jasa;
         $totalSparepart = $detail->penggunaanSparepart->sum('subtotal');
         $total = $totalJasa + $totalSparepart;
 
-        // Menyimpan data asli tanpa paksaan strtolower()
-        Transaksi::create([
+        // Simpan data transaksi keuangan resmi bengkel
+        $transaksi = Transaksi::create([
             'detail_servis_id' => $detail->id,
             'total_jasa' => $totalJasa,
             'total_sparepart' => $totalSparepart,
@@ -106,9 +118,17 @@ class TransaksiController extends Controller
             'metode_pembayaran' => $request->metode_pembayaran, 
         ]);
 
+        // 3 & 4. Sinkronisasi status Booking utama menjadi 'Selesai' secara otomatis
+        if ($detail->booking) {
+            $detail->booking->update([
+                'status' => 'Selesai'
+            ]);
+        }
+
+        // 7. Redirect langsung ke halaman cetak/detail invoice yang baru dibuat demi efisiensi waktu admin
         return redirect()
-            ->route('admin.transaksi.index')
-            ->with('success', 'Transaksi berhasil dibuat dari detail servis');
+            ->route('admin.transaksi.show', $transaksi->id)
+            ->with('success', 'Transaksi kasir berhasil dibuat. Invoice siap dicetak.');
     }
 
     /**
@@ -116,7 +136,7 @@ class TransaksiController extends Controller
      */
     public function show(string $id)
     {
-        $transaksi = Transaksi::with(['detailServis.booking.pelanggan', 'detailServis.booking.kendaraan'])->findOrFail($id);
+        $transaksi = Transaksi::with(['detailServis.booking.pelanggan', 'detailServis.booking.kendaraan', 'detailServis.penggunaanSparepart.sparepart'])->findOrFail($id);
 
         return view('admin.transaksi.show', compact('transaksi'));
     }
@@ -146,14 +166,13 @@ class TransaksiController extends Controller
             'status_pembayaran' => 'required|in:Menunggu Pembayaran,Belum Lunas,Lunas,Gagal',
         ]);
 
-        // Menyimpan data asli tanpa paksaan strtolower()
         $transaksi->update([
             'metode_pembayaran' => $request->metode_pembayaran,
             'status_pembayaran' => $request->status_pembayaran,
         ]);
 
         return redirect()->route('admin.transaksi.index')
-            ->with('success', 'Pembayaran berhasil diperbarui');
+            ->with('success', 'Status realisasi pembayaran berhasil diperbarui');
     }
 
     /**

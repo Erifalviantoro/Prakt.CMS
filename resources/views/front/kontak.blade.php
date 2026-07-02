@@ -15,6 +15,7 @@
 
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-gutter items-start">
             
+            <!-- Kolom Kiri: Informasi Kontak & Jam Operasional -->
             <div class="lg:col-span-1 space-y-6">
                 <div class="bg-surface-container-lowest p-8 rounded-xl border border-outline-variant shadow-sm">
                     <h3 class="font-headline-md text-[20px] text-primary mb-6">Informasi Kontak</h3>
@@ -74,35 +75,40 @@
                 </div>
             </div>
 
+            <!-- Kolom Kanan: Form Kirim Pesan -->
             <div class="lg:col-span-2 bg-surface-container-lowest p-8 md:p-10 rounded-xl border border-outline-variant shadow-sm">
                 <h3 class="font-headline-md text-headline-md text-primary mb-2">Kirim Pesan</h3>
                 <p class="font-body-md text-on-surface-variant mb-8">Isi formulir di bawah ini untuk mengirimkan kritik, saran, atau pertanyaan khusus.</p>
                 
-                <form action="#" method="POST" class="space-y-6">
+                @if(session('success'))
+                    <div class="mb-6 p-4 bg-green-100 border border-green-300 text-green-700 rounded-lg font-body-md flex items-center gap-2">
+                        <span class="material-symbols-outlined text-[20px]">check_circle</span>
+                        {{ session('success') }}
+                    </div>
+                @endif
+
+                <form action="{{ route('contact.store') }}" method="POST" class="space-y-6">
+                    @csrf
+
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div>
                             <label class="block font-label-md text-primary mb-2 font-semibold">Nama Lengkap</label>
-                            <input type="text" placeholder="Masukkan nama Anda" class="w-full px-4 py-3 rounded-lg border border-outline-variant bg-background focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary font-body-md text-primary" required />
+                            <input type="text" name="nama" placeholder="Masukkan nama Anda" class="w-full px-4 py-3 rounded-lg border border-outline-variant bg-background focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary font-body-md text-primary" required />
                         </div>
                         <div>
                             <label class="block font-label-md text-primary mb-2 font-semibold">Nomor WhatsApp</label>
-                            <input type="tel" placeholder="Contoh: 0812345678" class="w-full px-4 py-3 rounded-lg border border-outline-variant bg-background focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary font-body-md text-primary" required />
+                            <input type="tel" name="no_hp" placeholder="Contoh: 0812345678" class="w-full px-4 py-3 rounded-lg border border-outline-variant bg-background focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary font-body-md text-primary" required />
                         </div>
                     </div>
 
                     <div>
                         <label class="block font-label-md text-primary mb-2 font-semibold">Alamat Email</label>
-                        <input type="email" placeholder="nama@email.com" class="w-full px-4 py-3 rounded-lg border border-outline-variant bg-background focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary font-body-md text-primary" required />
-                    </div>
-
-                    <div>
-                        <label class="block font-label-md text-primary mb-2 font-semibold">Subjek</label>
-                        <input type="text" placeholder="Apa perihal pesan Anda?" class="w-full px-4 py-3 rounded-lg border border-outline-variant bg-background focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary font-body-md text-primary" required />
+                        <input type="email" name="email" placeholder="nama@email.com" class="w-full px-4 py-3 rounded-lg border border-outline-variant bg-background focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary font-body-md text-primary" required />
                     </div>
 
                     <div>
                         <label class="block font-label-md text-primary mb-2 font-semibold">Isi Pesan</label>
-                        <textarea rows="5" placeholder="Tuliskan detail pertanyaan atau pesan Anda disini..." class="w-full px-4 py-3 rounded-lg border border-outline-variant bg-background focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary font-body-md text-primary" required></textarea>
+                        <textarea name="pesan" rows="6" placeholder="Tuliskan detail pertanyaan atau pesan Anda disini..." class="w-full px-4 py-3 rounded-lg border border-outline-variant bg-background focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary font-body-md text-primary" required></textarea>
                     </div>
 
                     <button type="submit" class="bg-secondary text-white px-8 py-4 rounded-lg font-label-md text-label-md hover:bg-secondary/90 transition-all shadow-md flex items-center gap-2 active:scale-95">

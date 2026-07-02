@@ -2,182 +2,164 @@
 
 @section('content')
 <main class="ml-64 min-h-screen flex flex-col bg-slate-50/50">
+    
+    <div class="print:hidden">
+        @include('admin.layout.header')
+    </div>
 
-    @include('admin.layout.header')
-
-    <div class="flex-1 p-margin-desktop">
+    <div class="flex-1 p-margin-desktop print:p-0 print:bg-white">
         
-        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-10 border-b border-gray-200 pb-6">
-            <div class="flex items-center gap-4">
-                <div class="bg-slate-800 text-white p-3 rounded-2xl shadow-md">
-                    <span class="material-symbols-outlined text-3xl block">analytics</span>
-                </div>
-                <div>
-                    <h1 class="text-2xl font-bold text-slate-800 tracking-tight">
-                        Pusat Laporan & Analisis
-                    </h1>
-                    <p class="text-sm text-slate-500 mt-1">
-                        Pilih jenis data di bawah ini untuk melihat rekapitulasi, statistik, dan cetak dokumen berkala.
-                    </p>
-                </div>
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8 border-b border-gray-200 pb-6 print:mb-6 print:pb-4">
+            <div>
+                <button onclick="window.location.href='{{ route('admin.laporan.index') }}'" class="print:hidden flex items-center gap-2 text-xs font-semibold text-slate-500 hover:text-slate-800 transition-colors mb-3">
+                    <span class="material-symbols-outlined text-sm">arrow_back</span> Kembali ke Pusat Laporan
+                </button>
+                <h1 class="text-2xl font-bold text-slate-800 tracking-tight print:text-xl">Laporan Transaksi Finansial</h1>
+                <p class="text-sm text-slate-500 mt-1 print:text-xs">
+                    @if(request('tanggal_awal') && request('tanggal_akhir'))
+                        Periode Penjualan: <span class="font-semibold text-slate-700">{{ \Carbon\Carbon::parse(request('tanggal_awal'))->translatedFormat('d F Y') }}</span> s/d <span class="font-semibold text-slate-700">{{ \Carbon\Carbon::parse(request('tanggal_akhir'))->translatedFormat('d F Y') }}</span>
+                    @else
+                        Menampilkan seluruh riwayat akumulasi kas masuk dan piutang berjalan.
+                    @endif
+                </p>
             </div>
             
-            <div class="text-right text-xs text-slate-400 font-medium">
-                <span class="flex items-center gap-1.5 justify-end bg-white border border-slate-200 px-3 py-1.5 rounded-xl shadow-sm text-slate-600">
-                    <span class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
-                    Sistem Pemantauan Aktif
-                </span>
+            <div class="print:hidden">
+                <button onclick="window.print()" class="flex items-center gap-2 bg-slate-800 hover:bg-slate-900 text-white px-5 py-2.5 rounded-xl text-sm font-semibold shadow-md transition-all duration-150">
+                    <span class="material-symbols-outlined text-lg">print</span> Cetak Dokumen
+                </button>
             </div>
         </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div class="print:hidden bg-white p-5 rounded-2xl border border-slate-200 shadow-sm mb-8">
+            <form method="GET" action="{{ route('admin.laporan.transaksi') }}" class="flex flex-col md:flex-row items-end gap-4">
+                <div class="flex-1 w-full">
+                    <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">Tanggal Awal</label>
+                    <input type="date" name="tanggal_awal" value="{{ request('tanggal_awal') }}" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm font-medium text-slate-700 focus:outline-none focus:border-slate-400 transition-colors">
+                </div>
+                <div class="flex-1 w-full">
+                    <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">Tanggal Akhir</label>
+                    <input type="date" name="tanggal_akhir" value="{{ request('tanggal_akhir') }}" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm font-medium text-slate-700 focus:outline-none focus:border-slate-400 transition-colors">
+                </div>
+                <div class="flex gap-2 w-full md:w-auto">
+                    <button type="submit" class="flex-1 md:flex-none justify-center flex items-center gap-2 bg-rose-600 hover:bg-rose-700 text-white px-6 py-2.5 rounded-xl text-sm font-semibold transition-colors">
+                        <span class="material-symbols-outlined text-lg">filter_alt</span> Filter
+                    </button>
+                    @if(request('tanggal_awal') || request('tanggal_akhir'))
+                        <a href="{{ route('admin.laporan.transaksi') }}" class="justify-center flex items-center bg-slate-100 hover:bg-slate-200 text-slate-600 px-4 py-2.5 rounded-xl text-sm font-semibold transition-colors" title="Reset Filter">
+                            <span class="material-symbols-outlined text-lg">restart_alt</span>
+                        </a>
+                    @endif
+                </div>
+            </form>
+        </div>
 
-            <a href="{{ route('admin.laporan.booking') }}" class="group bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md hover:border-slate-300 transition-all duration-200 flex flex-col justify-between">
+        <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8 print:grid-cols-4 print:gap-2 print:mb-6">
+            <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm print:shadow-none print:p-4">
+                <p class="text-[10px] font-bold uppercase tracking-wider text-slate-400 print:text-[9px]">Total Pendapatan (Lunas)</p>
+                <p class="text-xl lg:text-2xl font-black text-emerald-600 mt-2 print:text-base">Rp {{ number_format($totalPendapatan, 0, ',', '.') }}</p>
+            </div>
+            <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm print:shadow-none print:p-4">
+                <p class="text-[10px] font-bold uppercase tracking-wider text-slate-400 print:text-[9px]">Volume Transaksi</p>
+                <p class="text-xl lg:text-2xl font-black text-slate-800 mt-2 print:text-base">{{ $totalTransaksi }} Rekord</p>
+            </div>
+            <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm print:shadow-none print:p-4">
+                <p class="text-[10px] font-bold uppercase tracking-wider text-slate-400 print:text-[9px]">Pembayaran Selesai</p>
+                <p class="text-xl lg:text-2xl font-black text-blue-600 mt-2 print:text-base">{{ $totalLunas }} Transaksi</p>
+            </div>
+            <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm print:shadow-none print:p-4">
+                <p class="text-[10px] font-bold uppercase tracking-wider text-slate-400 print:text-[9px]">Tagihan Tertunda</p>
+                <p class="text-xl lg:text-2xl font-black text-amber-600 mt-2 print:text-base">{{ $totalBelumLunas }} Invoice</p>
+            </div>
+        </div>
+
+        <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden print:border-none print:shadow-none">
+            <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse">
+                    <thead>
+                        <tr class="bg-slate-50 border-b border-slate-200 text-slate-400 text-[10px] font-bold uppercase tracking-wider print:bg-slate-100">
+                            <th class="px-6 py-4 print:px-2 print:py-2">No. Invoice</th>
+                            <th class="px-6 py-4 print:px-2 print:py-2">Pelanggan / Unit</th>
+                            <th class="px-6 py-4 print:px-2 print:py-2">Tanggal Transaksi</th>
+                            <th class="px-6 py-4 print:px-2 print:py-2">Status</th>
+                            <th class="px-6 py-4 text-right print:px-2 print:py-2">Total Biaya</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-100 text-sm text-slate-600">
+                        @forelse($data as $item)
+                            <tr class="hover:bg-slate-50/50 transition-colors print:hover:bg-transparent">
+                                <td class="px-6 py-4 font-semibold text-slate-800 print:px-2 print:py-2 print:text-xs">
+                                    {{ $item->kode_transaksi ?? 'TRX-'.$item->id }}
+                                </td>
+                                <td class="px-6 py-4 print:px-2 print:py-2 print:text-xs">
+                                    <div class="font-medium text-slate-700">
+                                        {{ $item->detailServis->booking->pelanggan->nama ?? 'Umum/Walk-In' }}
+                                    </div>
+                                    <div class="text-xs text-slate-400">
+                                        {{ $item->detailServis->booking->kendaraan->nomor_plat ?? '-' }} - {{ $item->detailServis->booking->kendaraan->merek_model ?? '-' }}
+                                    </div>
+                                </td>
+                                <td class="px-6 py-4 text-slate-500 print:px-2 print:py-2 print:text-xs">
+                                    {{ $item->created_at->translatedFormat('d M Y, H:i') }} WIB
+                                </td>
+                                <td class="px-6 py-4 print:px-2 print:py-2 print:text-xs">
+                                    @if($item->status_pembayaran == 'Lunas')
+                                        <span class="px-2.5 py-1 text-[10px] font-bold rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200/60 print:bg-transparent print:text-emerald-700 print:border-none print:p-0">Lunas</span>
+                                    @elseif($item->status_pembayaran == 'Belum Lunas' || $item->status_pembayaran == 'Menunggu Pembayaran')
+                                        <span class="px-2.5 py-1 text-[10px] font-bold rounded-full bg-amber-50 text-amber-700 border border-amber-200/60 print:bg-transparent print:text-amber-700 print:border-none print:p-0">Pending</span>
+                                    @else
+                                        <span class="px-2.5 py-1 text-[10px] font-bold rounded-full bg-rose-50 text-rose-700 border border-rose-200/60 print:bg-transparent print:text-rose-700 print:border-none print:p-0">{{ $item->status_pembayaran }}</span>
+                                    @endif
+                                </td>
+                                <td class="px-6 py-4 text-right font-bold text-slate-800 print:px-2 print:py-2 print:text-xs">
+                                    Rp {{ number_format($item->total_biaya, 0, ',', '.') }}
+                                </td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="5" class="px-6 py-12 text-center text-slate-400 font-medium">
+                                    <span class="material-symbols-outlined text-4xl block mb-2 opacity-40">find_in_page</span>
+                                    Tidak menemukan data transaksi pada parameter atau periode tersebut.
+                                </td>
+                            </tr>
+                        @endforelse
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="hidden print:block mt-16">
+            <div class="flex justify-between text-xs text-slate-600">
                 <div>
-                    <div class="flex items-center justify-between mb-4">
-                        <div class="p-3 rounded-xl bg-blue-50 text-blue-600 group-hover:bg-blue-600 group-hover:text-white transition-all duration-200">
-                            <span class="material-symbols-outlined text-2xl block">event_note</span>
-                        </div>
-                        <span class="text-[10px] font-bold uppercase tracking-wider px-2 py-1 bg-slate-100 text-slate-600 rounded-md">Berkala</span>
-                    </div>
-                    <h3 class="font-bold text-slate-800 text-lg group-hover:text-blue-600 transition-colors">Laporan Booking</h3>
-                    <p class="text-xs text-slate-400 mt-1.5 leading-relaxed">Rekapitulasi reservasi antrean servis, status kedatangan, dan histori keluhan pelanggan.</p>
+                    <p>Sistem Manajemen Bengkel - Sumber Baru Motor</p>
+                    <p class="text-[10px] text-slate-400 mt-1">Dicetak otomatis oleh Admin pada {{ now()->translatedFormat('d F Y, H:i') }} WIB</p>
                 </div>
-                <div class="flex items-center justify-end mt-6 text-slate-300 group-hover:text-blue-600 transition-colors">
-                    <span class="material-symbols-outlined text-xl transform group-hover:translate-x-1 transition-transform">arrow_forward</span>
+                <div class="text-center w-48">
+                    <p>Yogyakarta, {{ now()->translatedFormat('d F Y') }}</p>
+                    <p class="mt-16 font-bold text-slate-800 border-b border-slate-400 pb-1">Kepala Bengkel / Admin</p>
                 </div>
-            </a>
-
-            <a href="{{ route('admin.laporan.pelanggan') }}" class="group bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md hover:border-slate-300 transition-all duration-200 flex flex-col justify-between">
-                <div>
-                    <div class="flex items-center justify-between mb-4">
-                        <div class="p-3 rounded-xl bg-emerald-50 text-emerald-600 group-hover:bg-emerald-600 group-hover:text-white transition-all duration-200">
-                            <span class="material-symbols-outlined text-2xl block">group</span>
-                        </div>
-                        <span class="text-[10px] font-bold uppercase tracking-wider px-2 py-1 bg-slate-100 text-slate-600 rounded-md">Biodata</span>
-                    </div>
-                    <h3 class="font-bold text-slate-800 text-lg group-hover:text-emerald-600 transition-colors">Laporan Pelanggan</h3>
-                    <p class="text-xs text-slate-400 mt-1.5 leading-relaxed">Daftar member aktif, total kunjungan konsumen, serta riwayat interaksi pelanggan.</p>
-                </div>
-                <div class="flex items-center justify-end mt-6 text-slate-300 group-hover:text-emerald-600 transition-colors">
-                    <span class="material-symbols-outlined text-xl transform group-hover:translate-x-1 transition-transform">arrow_forward</span>
-                </div>
-            </a>
-
-            <a href="{{ route('admin.laporan.kendaraan') }}" class="group bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md hover:border-slate-300 transition-all duration-200 flex flex-col justify-between">
-                <div>
-                    <div class="flex items-center justify-between mb-4">
-                        <div class="p-3 rounded-xl bg-amber-50 text-amber-600 group-hover:bg-amber-600 group-hover:text-white transition-all duration-200">
-                            <span class="material-symbols-outlined text-2xl block">motorcycle</span>
-                        </div>
-                        <span class="text-[10px] font-bold uppercase tracking-wider px-2 py-1 bg-slate-100 text-slate-600 rounded-md">Aset</span>
-                    </div>
-                    <h3 class="font-bold text-slate-800 text-lg group-hover:text-amber-600 transition-colors">Laporan Kendaraan</h3>
-                    <p class="text-xs text-slate-400 mt-1.5 leading-relaxed">Data sebaran tipe kendaraan, nomor plat teregistrasi, dan rekam riwayat servis unit.</p>
-                </div>
-                <div class="flex items-center justify-end mt-6 text-slate-300 group-hover:text-amber-600 transition-colors">
-                    <span class="material-symbols-outlined text-xl transform group-hover:translate-x-1 transition-transform">arrow_forward</span>
-                </div>
-            </a>
-
-            <a href="{{ route('admin.laporan.layanan') }}" class="group bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md hover:border-slate-300 transition-all duration-200 flex flex-col justify-between">
-                <div>
-                    <div class="flex items-center justify-between mb-4">
-                        <div class="p-3 rounded-xl bg-indigo-50 text-indigo-600 group-hover:bg-indigo-600 group-hover:text-white transition-all duration-200">
-                            <span class="material-symbols-outlined text-2xl block">design_services</span>
-                        </div>
-                        <span class="text-[10px] font-bold uppercase tracking-wider px-2 py-1 bg-slate-100 text-slate-600 rounded-md">Produk</span>
-                    </div>
-                    <h3 class="font-bold text-slate-800 text-lg group-hover:text-indigo-600 transition-colors">Laporan Layanan</h3>
-                    <p class="text-xs text-slate-400 mt-1.5 leading-relaxed">Statistik jenis jasa servis paling diminati dan performa katalog paket penanganan.</p>
-                </div>
-                <div class="flex items-center justify-end mt-6 text-slate-300 group-hover:text-indigo-600 transition-colors">
-                    <span class="material-symbols-outlined text-xl transform group-hover:translate-x-1 transition-transform">arrow_forward</span>
-                </div>
-            </a>
-
-            <a href="{{ route('admin.laporan.mekanik') }}" class="group bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md hover:border-slate-300 transition-all duration-200 flex flex-col justify-between">
-                <div>
-                    <div class="flex items-center justify-between mb-4">
-                        <div class="p-3 rounded-xl bg-teal-50 text-teal-600 group-hover:bg-teal-600 group-hover:text-white transition-all duration-200">
-                            <span class="material-symbols-outlined text-2xl block">engineering</span>
-                        </div>
-                        <span class="text-[10px] font-bold uppercase tracking-wider px-2 py-1 bg-slate-100 text-slate-600 rounded-md">SDM</span>
-                    </div>
-                    <h3 class="font-bold text-slate-800 text-lg group-hover:text-teal-600 transition-colors">Laporan Mekanik</h3>
-                    <p class="text-xs text-slate-400 mt-1.5 leading-relaxed">Produktivitas montir, pembagian beban kerja, serta performa penyelesaian tugas.</p>
-                </div>
-                <div class="flex items-center justify-end mt-6 text-slate-300 group-hover:text-teal-600 transition-colors">
-                    <span class="material-symbols-outlined text-xl transform group-hover:translate-x-1 transition-transform">arrow_forward</span>
-                </div>
-            </a>
-
-            <a href="{{ route('admin.laporan.detail_servis') }}" class="group bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md hover:border-slate-300 transition-all duration-200 flex flex-col justify-between">
-                <div>
-                    <div class="flex items-center justify-between mb-4">
-                        <div class="p-3 rounded-xl bg-cyan-50 text-cyan-600 group-hover:bg-cyan-600 group-hover:text-white transition-all duration-200">
-                            <span class="material-symbols-outlined text-2xl block">assignment</span>
-                        </div>
-                        <span class="text-[10px] font-bold uppercase tracking-wider px-2 py-1 bg-slate-100 text-slate-600 rounded-md">Log</span>
-                    </div>
-                    <h3 class="font-bold text-slate-800 text-lg group-hover:text-cyan-600 transition-colors">Laporan Detail Servis</h3>
-                    <p class="text-xs text-slate-400 mt-1.5 leading-relaxed">Catatan teknis mendalam per pengerjaan unit, durasi bongkar, dan penanggung jawab.</p>
-                </div>
-                <div class="flex items-center justify-end mt-6 text-slate-300 group-hover:text-cyan-600 transition-colors">
-                    <span class="material-symbols-outlined text-xl transform group-hover:translate-x-1 transition-transform">arrow_forward</span>
-                </div>
-            </a>
-
-            <a href="{{ route('admin.laporan.sparepart') }}" class="group bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md hover:border-slate-300 transition-all duration-200 flex flex-col justify-between">
-                <div>
-                    <div class="flex items-center justify-between mb-4">
-                        <div class="p-3 rounded-xl bg-orange-50 text-orange-600 group-hover:bg-orange-600 group-hover:text-white transition-all duration-200">
-                            <span class="material-symbols-outlined text-2xl block">inventory_2</span>
-                        </div>
-                        <span class="text-[10px] font-bold uppercase tracking-wider px-2 py-1 bg-slate-100 text-slate-600 rounded-md">Stok</span>
-                    </div>
-                    <h3 class="font-bold text-slate-800 text-lg group-hover:text-orange-600 transition-colors">Laporan Sparepart</h3>
-                    <p class="text-xs text-slate-400 mt-1.5 leading-relaxed">Arsip ketersediaan suku cadang, batas minimum stok gudang, dan nilai inventaris barang.</p>
-                </div>
-                <div class="flex items-center justify-end mt-6 text-slate-300 group-hover:text-orange-600 transition-colors">
-                    <span class="material-symbols-outlined text-xl transform group-hover:translate-x-1 transition-transform">arrow_forward</span>
-                </div>
-            </a>
-
-            <a href="{{ route('admin.laporan.penggunaan_sparepart') }}" class="group bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md hover:border-slate-300 transition-all duration-200 flex flex-col justify-between">
-                <div>
-                    <div class="flex items-center justify-between mb-4">
-                        <div class="p-3 rounded-xl bg-purple-50 text-purple-600 group-hover:bg-purple-600 group-hover:text-white transition-all duration-200">
-                            <span class="material-symbols-outlined text-2xl block">build_circle</span>
-                        </div>
-                        <span class="text-[10px] font-bold uppercase tracking-wider px-2 py-1 bg-slate-100 text-slate-600 rounded-md">Logistik</span>
-                    </div>
-                    <h3 class="font-bold text-slate-800 text-lg group-hover:text-purple-600 transition-colors">Laporan Penggunaan Sparepart</h3>
-                    <p class="text-xs text-slate-400 mt-1.5 leading-relaxed">Audit pengeluaran komponen terpasang pada mesin pelanggan untuk memantau penyusutan.</p>
-                </div>
-                <div class="flex items-center justify-end mt-6 text-slate-300 group-hover:text-purple-600 transition-colors">
-                    <span class="material-symbols-outlined text-xl transform group-hover:translate-x-1 transition-transform">arrow_forward</span>
-                </div>
-            </a>
-
-            <a href="{{ route('admin.laporan.transaksi') }}" class="group bg-rose-50/20 p-6 rounded-2xl border border-rose-200/60 shadow-sm hover:shadow-md hover:border-rose-300 transition-all duration-200 flex flex-col justify-between">
-                <div>
-                    <div class="flex items-center justify-between mb-4">
-                        <div class="p-3 rounded-xl bg-rose-100 text-rose-600 group-hover:bg-rose-600 group-hover:text-white transition-all duration-200">
-                            <span class="material-symbols-outlined text-2xl block">payments</span>
-                        </div>
-                        <span class="text-[10px] font-bold uppercase tracking-wider px-2 py-1 bg-rose-200 text-rose-700 rounded-md">Finansial</span>
-                    </div>
-                    <h3 class="font-bold text-slate-800 text-lg group-hover:text-rose-600 transition-colors">Laporan Transaksi</h3>
-                    <p class="text-xs text-slate-500 mt-1.5 leading-relaxed">Omzet pendapatan kotor, rekap kas masuk, pembayaran lunas, dan status piutang bengkel.</p>
-                </div>
-                <div class="flex items-center justify-end mt-6 text-rose-300 group-hover:text-rose-600 transition-colors">
-                    <span class="material-symbols-outlined text-xl transform group-hover:translate-x-1 transition-transform">arrow_forward</span>
-                </div>
-            </a>
-
+            </div>
         </div>
 
     </div>
 </main>
+
+<style>
+    @media print {
+        body {
+            background-color: #ffffff !important;
+            color: #000000 !important;
+        }
+        /* Sembunyikan sidebar utama bawaan layout */
+        aside, nav, header, .sidebar, [class*="sidebar"] {
+            display: none !important;
+        }
+        /* Tarik main layout ke kiri penuh karena sidebar hilang */
+        main {
+            margin-left: 0 !important;
+            padding: 0 !important;
+            background: transparent !important;
+        }
+    }
+</style>
 @endsection

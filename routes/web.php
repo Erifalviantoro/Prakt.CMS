@@ -14,32 +14,42 @@ use App\Http\Controllers\Admin\TransaksiController;
 use App\Http\Controllers\Admin\DetailServisController;
 use App\Http\Controllers\Admin\BookingController;
 use App\Http\Controllers\Admin\LaporanController;
+use App\Http\Controllers\ContactController;
 
 /*
 |--------------------------------------------------------------------------
 | Web Routes
 |--------------------------------------------------------------------------
 |
-| Here is where you can register web routes for your application. These
-| routes are loaded by the RouteServiceProvider and all of them will
-| be assigned to the "web" middleware group. Make something great!
+| Di sini Anda mendaftarkan rute web untuk aplikasi. Semua rute di dalam
+| grup middleware "admin" diproteksi secara ketat.
 |
 */
+
+// Alur Default: Redirect ke Halaman Utama User
+Route::get('/', function () {
+    return redirect()->route('front.home');
+});
+
+/**
+ * ==========================================
+ * GRUP RUTE ADMIN (Grup Middleware Utama)
+ * ==========================================
+ */
 Route::prefix('admin')
     ->middleware(['auth', 'admin'])
     ->name('admin.')
     ->group(function () {
 
-        Route::get('/dashboard', [DashboardController::class, 'index'])
-            ->name('dashboard');
+        // Dashboard
+        Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
-        Route::resource('booking', BookingController::class)
-        ->only([
-            'index',
-            'show',
-            'edit',
-            'update'
+        // Poin 4: Resource Booking Terbatasi (Hanya kelola & update status)
+        Route::resource('booking', BookingController::class)->only([
+            'index', 'show', 'edit', 'update'
         ]);
+
+        // Poin 5: Resource Master Data & Operasional Bengkel
         Route::resource('pelanggan', PelangganController::class);
         Route::resource('kendaraan', KendaraanController::class);
         Route::resource('layanan', LayananController::class);
@@ -49,91 +59,84 @@ Route::prefix('admin')
         Route::resource('transaksi', TransaksiController::class);
         Route::resource('detailservis', DetailServisController::class);
 
-    Route::get('/laporan', [LaporanController::class, 'index'])->name('laporan.index');
-    Route::get('/laporan/booking', [LaporanController::class, 'booking'])->name('laporan.booking');
-    Route::get('/laporan/pelanggan', [LaporanController::class, 'pelanggan'])->name('laporan.pelanggan');
-    Route::get('/laporan/kendaraan', [LaporanController::class, 'kendaraan'])->name('laporan.kendaraan');
-    Route::get('/laporan/layanan', [LaporanController::class, 'layanan'])->name('laporan.layanan');
-    Route::get('/laporan/mekanik', [LaporanController::class, 'mekanik'])->name('laporan.mekanik');
-    Route::get('/laporan/detail-servis', [LaporanController::class, 'detailServis'])->name('laporan.detail_servis');
-    Route::get('/laporan/sparepart', [LaporanController::class, 'sparepart'])->name('laporan.sparepart');
-    Route::get('/laporan/penggunaan-sparepart', [LaporanController::class, 'penggunaanSparepart'])->name('laporan.penggunaan_sparepart');
-    Route::get('/laporan/transaksi', [LaporanController::class, 'transaksi'])->name('laporan.transaksi');
+        // Poin 1: Pindahan Rute Aksi Tombol Mulai & Selesai Detail Servis (Kini Konsisten dengan /admin/...)
+        Route::post('detailservis/{id}/mulai', [DetailServisController::class, 'mulai'])->name('detailservis.mulai');
+        Route::post('detailservis/{id}/selesai', [DetailServisController::class, 'selesai'])->name('detailservis.selesai');
+
+        // Poin 3: Pindahan Rute Manajemen Kontak Feedback (Sisi Admin)
+        Route::get('/contacts', [ContactController::class, 'index'])->name('contacts');
+        Route::delete('/contacts/{contact}', [ContactController::class, 'destroy'])->name('contacts.destroy');
+
+        // Poin 9: Usulan Rute Cetak Termal / PDF Invoice Khusus untuk Demo Aplikasi Lebih Profesional
+        Route::get('transaksi/{id}/cetak', [TransaksiController::class, 'cetak'])->name('transaksi.cetak');
+
+        // Menu Modul Laporan Eksekutif Bengkel
+        Route::prefix('laporan')->name('laporan.')->group(function () {
+            Route::get('/', [LaporanController::class, 'index'])->name('index');
+            Route::get('/booking', [LaporanController::class, 'booking'])->name('booking');
+            Route::get('/pelanggan', [LaporanController::class, 'pelanggan'])->name('pelanggan');
+            Route::get('/kendaraan', [LaporanController::class, 'kendaraan'])->name('kendaraan');
+            Route::get('/layanan', [LaporanController::class, 'layanan'])->name('layanan');
+            Route::get('/mekanik', [LaporanController::class, 'mekanik'])->name('mekanik');
+            Route::get('/detail-servis', [LaporanController::class, 'detailServis'])->name('detail_servis');
+            Route::get('/sparepart', [LaporanController::class, 'sparepart'])->name('sparepart');
+            Route::get('/penggunaan-sparepart', [LaporanController::class, 'penggunaanSparepart'])->name('penggunaan_sparepart');
+            Route::get('/transaksi', [LaporanController::class, 'transaksi'])->name('transaksi'); 
+        });
 });
 
-
-Route::post(
-    'detailservis/{id}/mulai',
-    [DetailServisController::class, 'mulai']
-)->name('admin.detailservis.mulai'); // <-- Tambahkan 'admin.' di sini
-
-Route::post(
-    'detailservis/{id}/selesai',
-    [DetailServisController::class, 'selesai']
-)->name('admin.detailservis.selesai'); // <-- Tambahkan 'admin.' di sini
-
-
-Route::get('/', function () {
-    return redirect()->route('front.home');
-});
+/**
+ * ==========================================
+ * GRUP RUTE DEPAN / PUBLIC FRONTEND
+ * ==========================================
+ */
 Route::prefix('front')->name('front.')->group(function () {
-    // Halaman Utama & Statis
+    // Halaman Statis & Informasi
     Route::get('/', [FrontController::class, 'home'])->name('home');
     Route::get('/tentang-kami', [FrontController::class, 'tentang'])->name('tentang');
     Route::get('/kontak', [FrontController::class, 'kontak'])->name('kontak');
 
-    // Fitur Berita
+    // Berita & Edukasi Otomotif
     Route::get('/berita', [FrontController::class, 'berita'])->name('berita.index');
-    Route::get('/berita/{id}', [FrontController::class, 'detailBerita'])->name('berita.show'); // Sesuai file show.blade.php di folder berita
+    Route::get('/berita/{id}', [FrontController::class, 'detailBerita'])->name('berita.show');
 
-    // Fitur Layanan
+    // Katalog Layanan Servis Bengkel
     Route::get('/layanan', [FrontController::class, 'layanan'])->name('layanan.index');
     Route::get('/layanan/{id}', [FrontController::class, 'detailLayanan'])->name('layanan.show');
 
-    // Fitur Booking
-    Route::middleware('auth')->group(function () {
-        Route::get('/booking', [FrontController::class, 'booking'])
-            ->name('booking.create');
+    // Fitur Cek Status Booking & Progres Mekanik Real-time via Kode Booking
+    Route::get('/status-booking', [FrontController::class, 'statusBooking'])->name('status.booking');
+    Route::post('/status-booking', [FrontController::class, 'cariStatusBooking'])->name('status.booking.cari');
 
-        Route::post('/booking', [FrontController::class, 'storeBooking'])
-            ->name('booking.store');
+    // Proteksi Autentikasi Pengguna/Pelanggan Umum
+    Route::middleware(['auth','pelanggan'])->group(function () {
+        // Reservasi Booking Online
+        Route::get('/booking', [FrontController::class, 'booking'])->name('booking.create');
+        Route::post('/booking', [FrontController::class, 'storeBooking'])->name('booking.store');
+        
+        // Dashboard Profil, Pengaturan Akun, & Riwayat Nota Masa Lalu
+        Route::get('/dashboard', [FrontController::class, 'dashboard'])->name('dashboard');
+        Route::get('/profile', [FrontController::class, 'profile'])->name('profile');
+        Route::get('/profile/edit', [FrontController::class, 'editProfile'])->name('profile.edit');
+        Route::put('/profile/update', [FrontController::class, 'updateProfile'])->name('profile.update');
+        Route::get('/riwayat', [FrontController::class, 'riwayat'])->name('riwayat');
+        Route::get('/riwayat/{id}', [FrontController::class, 'detailRiwayat'])->name('riwayat.show');
     });
+    
+    // Halaman Berhasil Reservasi
     Route::get('/booking/sukses', [FrontController::class, 'bookingSukses'])->name('booking.sukses');
-    
-    // Cek Status Servis
-Route::get('/status-booking', [FrontController::class, 'statusBooking'])
-    ->name('status.booking');
-
-Route::post('/status-booking', [FrontController::class, 'cariStatusBooking'])
-    ->name('status.booking.cari');
-
-   Route::get('/dashboard', [FrontController::class, 'dashboard'])
-        ->name('dashboard');
-
-    Route::get('/profile', [FrontController::class, 'profile'])
-        ->name('profile');
-
-    Route::get('/riwayat', [FrontController::class, 'riwayat'])
-        ->name('riwayat');
-
-    Route::get('/riwayat/{id}', [FrontController::class, 'detailRiwayat'])
-    ->name('riwayat.show');
-    
-     Route::get('/profile/edit', [FrontController::class, 'editProfile'])
-        ->name('profile.edit');
-
-    Route::put('/profile/update', [FrontController::class, 'updateProfile'])
-        ->name('profile.update');
 });
-Route::get('/profil', function () {
-    return view('profil');
-})->name('profil');
 
+// Poin 2: Simpan Satu Rute Kirim Pesan / Hubungi Kami untuk Publik (Duplikat Lain Sudah Dihapus)
+Route::post('/contact', [ContactController::class, 'store'])->name('contact.store');
 
+// Poin 7: Rute Manajemen Profil Bawaan Breeze (Tetap Dipertahankan)
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
+
+// Poin 8: Penertiban Kode -> Rute statis `Route::get('/profil')` yang usang telah dihapus dengan sukses.
 
 require __DIR__.'/auth.php';
